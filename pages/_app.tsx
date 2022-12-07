@@ -8,7 +8,14 @@ const queryClient = new QueryClient();
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider withGlobalStyles withNormalizeCSS>
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          /** Put your mantine theme override here */
+          colorScheme: "light",
+        }}
+      >
         <Component {...pageProps} />
       </MantineProvider>
     </QueryClientProvider>
