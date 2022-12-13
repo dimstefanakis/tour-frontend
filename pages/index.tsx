@@ -1,12 +1,14 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 //icons
 import { IconPlus } from "@tabler/icons";
 //mantine core things
 import { Center, Container, Input, Text, Textarea } from "@mantine/core";
-import {Modal,Button} from "@mantine/core"
+import { Modal, Button } from "@mantine/core";
+import { IndexInfo } from "typescript";
 
 //dummy data
 const userData = [
@@ -45,43 +47,68 @@ export default function Home() {
     setOpenModal(true);
   };
 
-  const [userName, setName] = useState("");
-  const [userPhone, setPhone] = useState("");
-  const [userNotes, setNotes] = useState("");
+  const [guides, setGuides] = useState([
+    {
+      name: "",
+      phone: "",
+      notes: "",
+    },
+  ]);
+  const [newGuides, setNewGuides] = useState([
+    {
+      name: "",
+      phone: "",
+      notes: "",
+    },
+  ]);
 
-  //when user submits the form add the new user to the list
-  const handleSubmit = () => {
-    if (userName && userPhone && userNotes) {
-      const newUser = {
-        id: users.length + 1,
-        name: userName,
-        phone: userPhone,
-        notes: userNotes,
-      };
-      setUsers([...users, newUser]);
-      setName("");
-      setPhone("");
-      setNotes("");
-    }
-    setOpenModal(false);
-    console.log(users);
+  //get guide from api using axios
+  const getGuides = async () => {
+    const response = await axios.get("http://localhost:8000/api/v1/guides/");
+    setGuides(response.data);
+
+    console.log(guides);
   };
+
+  useEffect(() => {
+    getGuides();
+  }, []);
 
   //setName to the value of the input
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
+  // const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setName(e.target.value);
+  // };
 
   //setPhone to the value of the input
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
-  };
+  // const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPhone(e.target.value);
+  // };
 
   //setNotes to the value of the input
-  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNotes(e.target.value);
-  };
+  // const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   setNotes(e.target.value);
+  // };
 
+  const handleChange = (e: any) => {
+    setNewGuides((prev: any) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+  const { name, phone, notes }: any = newGuides;
+  const handleSubmit = () => {
+    const newGuide = {
+      name,
+      phone,
+      notes,
+    };
+    axios.post("http://localhost:8000/api/v1/guides/create/", newGuide);
+    setGuides([...guides, newGuide]);
+
+    console.log(newGuide);
+
+    setOpenModal(false);
+  };
 
   return (
     <>
@@ -93,15 +120,15 @@ export default function Home() {
           paddingTop: "100px",
         }}
       >
-        <Container >
+        <Container>
           <Text fz="xl" fw={700}>
             Guides List
           </Text>
         </Container>
         <Container>
-          {users.map((user) => (
+          {guides.map((user) => (
             <Container
-              key={user.id}
+              key={user.phone}
               style={{
                 marginTop: "20px",
                 border: "1px solid black",
@@ -117,16 +144,32 @@ export default function Home() {
             </Container>
           ))}
         </Container>
-        <Container style={{marginTop:"10px",cursor:"pointer"}}>
-
-          <IconPlus onClick={handleOpenModal}/>
+        <Container style={{ marginTop: "10px", cursor: "pointer" }}>
+          <IconPlus onClick={handleOpenModal} />
         </Container>
         <Container>
           <Modal opened={openModal} onClose={() => setOpenModal(false)}>
-            <Input placeholder="Guide's name" onChange={handleNameChange} style={{marginTop:"10px"}}/>
-            <Input placeholder="Guide's phone number" onChange={handlePhoneChange} style={{marginTop:"10px"}}/>
-            <Textarea placeholder="Notes about the guide" onChange={handleNotesChange} style={{marginTop:"10px"}}/>
-            <Button onClick={handleSubmit} style={{marginTop:"10px"}}>Submit</Button>
+            <Input
+              placeholder="Guide's name"
+              name="name"
+              onChange={handleChange}
+              style={{ marginTop: "10px" }}
+            />
+            <Input
+              placeholder="Guide's phone number"
+              name="phone"
+              onChange={handleChange}
+              style={{ marginTop: "10px" }}
+            />
+            <Textarea
+              placeholder="Notes about the guide"
+              name="notes"
+              onChange={handleChange}
+              style={{ marginTop: "10px" }}
+            />
+            <Button onClick={handleSubmit} style={{ marginTop: "10px" }}>
+              Submit
+            </Button>
           </Modal>
         </Container>
       </Center>
