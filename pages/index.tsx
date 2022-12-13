@@ -5,48 +5,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 //icons
 import { IconPlus } from "@tabler/icons";
+//fuzzysort
+import fuzzysort from "fuzzysort";
 //mantine core things
 import { Center, Container, Input, Text, Textarea } from "@mantine/core";
 import { Modal, Button } from "@mantine/core";
 import { IndexInfo } from "typescript";
 
-//dummy data
-const userData = [
-  {
-    id: 1,
-    name: "John Doe",
-    phone: "1234567890",
-    notes: "textarea",
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    phone: "1234567890",
-    notes: "textarea",
-  },
-  {
-    id: 3,
-    name: "John Doe",
-    phone: "1234567890",
-    notes: "textarea",
-  },
-  {
-    id: 4,
-    name: "John Doe",
-    phone: "1234567890",
-    notes: "textarea",
-  },
-];
+
 
 export default function Home() {
   //set userData to state
-  const [users, setUsers] = useState(userData);
   const [openModal, setOpenModal] = useState(false);
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
   const [guides, setGuides] = useState([
     {
       name: "",
@@ -61,33 +31,39 @@ export default function Home() {
       notes: "",
     },
   ]);
+  const [search, setSearch] = useState(guides);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+
+
+//setup a search bar that searches through the guides list and returns the results in a new array called search
+  const handleSearch = (e: any) => {
+    const results = fuzzysort.go(e.target.value, guides, {
+      keys: ["name", "phone", "notes"],
+    });
+    const match = results.map((result) => result.obj);
+    //if the search bar is empty, return the original guides list
+    if (e.target.value === "") {
+      setSearch(guides);
+    }
+    else {
+      setSearch(match);
+    }
+  };
 
   //get guide from api using axios
   const getGuides = async () => {
     const response = await axios.get("http://localhost:8000/api/v1/guides/");
     setGuides(response.data);
 
-    console.log(guides);
   };
 
   useEffect(() => {
     getGuides();
   }, []);
-
-  //setName to the value of the input
-  // const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setName(e.target.value);
-  // };
-
-  //setPhone to the value of the input
-  // const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPhone(e.target.value);
-  // };
-
-  //setNotes to the value of the input
-  // const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   setNotes(e.target.value);
-  // };
 
   const handleChange = (e: any) => {
     setNewGuides((prev: any) => ({
@@ -95,6 +71,7 @@ export default function Home() {
       [e.target.name]: e.target.value,
     }));
   };
+
   const { name, phone, notes }: any = newGuides;
   const handleSubmit = () => {
     const newGuide = {
@@ -109,6 +86,10 @@ export default function Home() {
 
     setOpenModal(false);
   };
+
+  useEffect(() => {
+    setSearch(guides);
+  }, [guides]);
 
   return (
     <>
@@ -125,8 +106,16 @@ export default function Home() {
             Guides List
           </Text>
         </Container>
+        {/* search bar */}
+        <Container style={{ marginTop: "10px" }}>
+          <Input
+            placeholder="Search for a guide"
+            onChange={handleSearch}
+            style={{ width: "100%" }}
+          />
+        </Container>
         <Container>
-          {guides.map((user) => (
+          {search.map((user) => (
             <Container
               key={user.phone}
               style={{
