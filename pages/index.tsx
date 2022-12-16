@@ -2,17 +2,22 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+//mantine core things
+import {
+  Center,
+  Container,
+  Input,
+  Text,
+  Textarea,
+  AppShell,
+} from "@mantine/core";
+import { Modal, Button, Stack, Header } from "@mantine/core";
 //icons
 import { IconPlus } from "@tabler/icons";
-//fuzzysort
+import GuideItem from "../src/flat/GuideItem";
 import fuzzysort from "fuzzysort";
-//mantine core things
-import { Center, Container, Input, Text, Textarea } from "@mantine/core";
-import { Modal, Button } from "@mantine/core";
-import { IndexInfo } from "typescript";
-
-
+import axios from "axios";
+import App from "./_app";
 
 export default function Home() {
   //set userData to state
@@ -37,9 +42,7 @@ export default function Home() {
     setOpenModal(true);
   };
 
-
-
-//setup a search bar that searches through the guides list and returns the results in a new array called search
+  //setup a search bar that searches through the guides list and returns the results in a new array called search
   const handleSearch = (e: any) => {
     const results = fuzzysort.go(e.target.value, guides, {
       keys: ["name", "phone", "notes"],
@@ -48,8 +51,7 @@ export default function Home() {
     //if the search bar is empty, return the original guides list
     if (e.target.value === "") {
       setSearch(guides);
-    }
-    else {
+    } else {
       setSearch(match);
     }
   };
@@ -58,7 +60,6 @@ export default function Home() {
   const getGuides = async () => {
     const response = await axios.get("http://localhost:8000/api/v1/guides/");
     setGuides(response.data);
-
   };
 
   useEffect(() => {
@@ -93,75 +94,52 @@ export default function Home() {
 
   return (
     <>
-      <Center
-        style={{
-          width: "50%",
-          height: "100%",
-          flexDirection: "column",
-          paddingTop: "100px",
-        }}
-      >
-        <Container>
-          <Text fz="xl" fw={700}>
+      <AppShell>
+        <Container style={{ width: "50%" }}>
+          <Text fz="xl" fw={700} my='xl'>
             Guides List
           </Text>
-        </Container>
-        {/* search bar */}
-        <Container style={{ marginTop: "10px" }}>
+          {/* search bar */}
           <Input
             placeholder="Search for a guide"
             onChange={handleSearch}
             style={{ width: "100%" }}
           />
+          <Stack my="md">
+            {search.map((user) => (
+              <GuideItem key={user.phone} user={user}></GuideItem>
+            ))}
+          </Stack>
+          <Button my="md" w="100%">
+            <IconPlus onClick={handleOpenModal} />
+          </Button>
+          <Container>
+            <Modal opened={openModal} onClose={() => setOpenModal(false)}>
+              <Input
+                placeholder="Guide's name"
+                name="name"
+                onChange={handleChange}
+                style={{ marginTop: "10px" }}
+              />
+              <Input
+                placeholder="Guide's phone number"
+                name="phone"
+                onChange={handleChange}
+                style={{ marginTop: "10px" }}
+              />
+              <Textarea
+                placeholder="Notes about the guide"
+                name="notes"
+                onChange={handleChange}
+                style={{ marginTop: "10px" }}
+              />
+              <Button onClick={handleSubmit} style={{ marginTop: "10px" }}>
+                Submit
+              </Button>
+            </Modal>
+          </Container>
         </Container>
-        <Container>
-          {search.map((user) => (
-            <Container
-              key={user.phone}
-              style={{
-                marginTop: "20px",
-                border: "1px solid black",
-                borderRadius: "9px",
-                minWidth: "300px",
-                width: "100%",
-                padding: "10px",
-              }}
-            >
-              <Text fz="md">{user.name}</Text>
-              <Text fz="md">{user.phone}</Text>
-              <Text fz="md">{user.notes}</Text>
-            </Container>
-          ))}
-        </Container>
-        <Container style={{ marginTop: "10px", cursor: "pointer" }}>
-          <IconPlus onClick={handleOpenModal} />
-        </Container>
-        <Container>
-          <Modal opened={openModal} onClose={() => setOpenModal(false)}>
-            <Input
-              placeholder="Guide's name"
-              name="name"
-              onChange={handleChange}
-              style={{ marginTop: "10px" }}
-            />
-            <Input
-              placeholder="Guide's phone number"
-              name="phone"
-              onChange={handleChange}
-              style={{ marginTop: "10px" }}
-            />
-            <Textarea
-              placeholder="Notes about the guide"
-              name="notes"
-              onChange={handleChange}
-              style={{ marginTop: "10px" }}
-            />
-            <Button onClick={handleSubmit} style={{ marginTop: "10px" }}>
-              Submit
-            </Button>
-          </Modal>
-        </Container>
-      </Center>
+      </AppShell>
     </>
   );
 }
