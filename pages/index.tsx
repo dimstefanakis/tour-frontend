@@ -1,6 +1,3 @@
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
 import React, { useEffect, useState } from "react";
 //mantine core things
 import {
@@ -11,13 +8,14 @@ import {
   Textarea,
   AppShell,
 } from "@mantine/core";
-import { Modal, Button, Stack, Header } from "@mantine/core";
+import { Modal, Button, Stack, Flex } from "@mantine/core";
+import { Calendar } from "@mantine/dates";
 //icons
 import { IconPlus } from "@tabler/icons";
 import GuideItem from "../src/flat/GuideItem";
+import GuideCalendar from "../src/features/GuideCalendar";
 import fuzzysort from "fuzzysort";
 import axios from "axios";
-import App from "./_app";
 
 export default function Home() {
   //set userData to state
@@ -29,6 +27,7 @@ export default function Home() {
       notes: "",
     },
   ]);
+  const [selectedGuide, setSelectedGuide] = useState<any>(null);
   const [newGuides, setNewGuides] = useState([
     {
       name: "",
@@ -58,7 +57,10 @@ export default function Home() {
 
   //get guide from api using axios
   const getGuides = async () => {
-    const response = await axios.get("http://localhost:8000/api/v1/guides/");
+    // TODO: replace with .env variable
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/guides/`
+    );
     setGuides(response.data);
   };
 
@@ -80,7 +82,8 @@ export default function Home() {
       phone,
       notes,
     };
-    axios.post("http://localhost:8000/api/v1/guides/create/", newGuide);
+    // TODO: replace with .env variable
+    axios.post(`${process.env.NEXT_PUBLIC_API_URL}/guides/create/`, newGuide);
     setGuides([...guides, newGuide]);
 
     console.log(newGuide);
@@ -92,53 +95,67 @@ export default function Home() {
     setSearch(guides);
   }, [guides]);
 
+  function handleSelectGuide(guide: any) {
+    setSelectedGuide(guide);
+  }
+
   return (
     <>
       <AppShell>
-        <Container style={{ width: "50%" }}>
-          <Text fz="xl" fw={700} my='xl'>
-            Guides List
-          </Text>
-          {/* search bar */}
-          <Input
-            placeholder="Search for a guide"
-            onChange={handleSearch}
-            style={{ width: "100%" }}
-          />
-          <Stack my="md">
-            {search.map((user) => (
-              <GuideItem key={user.phone} user={user}></GuideItem>
-            ))}
-          </Stack>
-          <Button my="md" w="100%">
-            <IconPlus onClick={handleOpenModal} />
-          </Button>
-          <Container>
-            <Modal opened={openModal} onClose={() => setOpenModal(false)}>
-              <Input
-                placeholder="Guide's name"
-                name="name"
-                onChange={handleChange}
-                style={{ marginTop: "10px" }}
-              />
-              <Input
-                placeholder="Guide's phone number"
-                name="phone"
-                onChange={handleChange}
-                style={{ marginTop: "10px" }}
-              />
-              <Textarea
-                placeholder="Notes about the guide"
-                name="notes"
-                onChange={handleChange}
-                style={{ marginTop: "10px" }}
-              />
-              <Button onClick={handleSubmit} style={{ marginTop: "10px" }}>
-                Submit
-              </Button>
-            </Modal>
+        <Flex w="100%" justify="center" align="center">
+          <Container style={{ width: "50%" }}>
+            <Text fz="xl" fw={700} my="xl">
+              Guides List
+            </Text>
+            {/* search bar */}
+            <Input
+              placeholder="Search for a guide"
+              onChange={handleSearch}
+              style={{ width: "100%" }}
+            />
+            <Stack my="md">
+              {search.map((guide) => (
+                <GuideItem
+                  key={guide.phone}
+                  guide={guide}
+                  isSelected={guide.name === selectedGuide?.name}
+                  onClick={handleSelectGuide}
+                ></GuideItem>
+              ))}
+            </Stack>
+            <Button my="md" w="100%" onClick={handleOpenModal}>
+              <IconPlus />
+            </Button>
+            <Container>
+              <Modal opened={openModal} onClose={() => setOpenModal(false)}>
+                <Input
+                  placeholder="Guide's name"
+                  name="name"
+                  onChange={handleChange}
+                  style={{ marginTop: "10px" }}
+                />
+                <Input
+                  placeholder="Guide's phone number"
+                  name="phone"
+                  onChange={handleChange}
+                  style={{ marginTop: "10px" }}
+                />
+                <Textarea
+                  placeholder="Notes about the guide"
+                  name="notes"
+                  onChange={handleChange}
+                  style={{ marginTop: "10px" }}
+                />
+                <Button onClick={handleSubmit} style={{ marginTop: "10px" }}>
+                  Submit
+                </Button>
+              </Modal>
+            </Container>
           </Container>
-        </Container>
+          <Container>
+            <GuideCalendar guide={selectedGuide} />
+          </Container>
+        </Flex>
       </AppShell>
     </>
   );

@@ -1,8 +1,20 @@
 import { Paper, Text } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 
-function GuideItem({ user }: { user: any }) {
+function GuideItem({
+  guide,
+  isSelected,
+  onClick,
+}: {
+  guide: any;
+  isSelected: boolean;
+  onClick: any;
+}) {
   const { hovered, ref } = useHover();
+
+  function handleClick() {
+    onClick(guide);
+  }
 
   return (
     <Paper
@@ -11,16 +23,19 @@ function GuideItem({ user }: { user: any }) {
       radius={hovered ? "md" : "sm"}
       p="lg"
       withBorder
-      
+      onClick={handleClick}
       style={{
         minWidth: "50%",
         transition: "box-shadow 200ms ease, border-radius 200ms ease",
         cursor: "pointer",
+        backgroundColor: isSelected ? "#e6e6e6" : "white",
       }}
     >
-      <Text fz="md">{user.name}</Text>
-      <Text fz="md">{user.phone}</Text>
-      <Text fz="md" style={{wordBreak: 'break-word'}}>{user.notes}</Text>
+      <Text fz="md">{guide.name}</Text>
+      <Text fz="md">{guide.phone}</Text>
+      <Text fz="md" style={{ wordBreak: "break-word" }}>
+        {guide.notes}
+      </Text>
     </Paper>
   );
 }
