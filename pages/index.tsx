@@ -22,6 +22,7 @@ export default function Home() {
   const [openModal, setOpenModal] = useState(false);
   const [guides, setGuides] = useState([
     {
+      id: "",
       name: "",
       phone: "",
       notes: "",
@@ -81,8 +82,8 @@ export default function Home() {
       name,
       phone,
       notes,
+      id: Math.random().toString(36).substr(2, 9),
     };
-    // TODO: replace with .env variable
     axios.post(`${process.env.NEXT_PUBLIC_API_URL}/guides/create/`, newGuide);
     setGuides([...guides, newGuide]);
 
@@ -116,9 +117,9 @@ export default function Home() {
             <Stack my="md">
               {search.map((guide) => (
                 <GuideItem
-                  key={guide.phone}
+                  key={guide.id}
                   guide={guide}
-                  isSelected={guide.name === selectedGuide?.name}
+                  isSelected={guide.id === selectedGuide?.id}
                   onClick={handleSelectGuide}
                 ></GuideItem>
               ))}

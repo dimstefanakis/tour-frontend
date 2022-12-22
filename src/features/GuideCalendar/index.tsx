@@ -14,6 +14,17 @@ function GuideCalendar({ guide }: { guide: any }) {
     setAvailability(response.data);
   }
 
+  async function postGuideAvailability(status: string) {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/guides/${guide.id}/availability/`,
+      {
+        dates: selectedDates,
+        status: status,
+      }
+    );
+    setAvailability(response.data);
+  }
+
   useEffect(() => {
     if (guide) {
       getGuideAvailability();
