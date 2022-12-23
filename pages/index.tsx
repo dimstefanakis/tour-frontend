@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 //mantine core things
 import {
   Center,
@@ -37,6 +37,7 @@ export default function Home() {
     },
   ]);
   const [search, setSearch] = useState(guides);
+  const [guideTest,setGuideTest]=useState({})
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -76,26 +77,32 @@ export default function Home() {
     }));
   };
 
-  const { name, phone, notes }: any = newGuides;
-  const handleSubmit = () => {
+  const { name, phone, notes,id }: any = newGuides;
+  const handleSubmit = async() => {
     const newGuide = {
       name,
       phone,
       notes,
-      id: Math.random().toString(36).substr(2, 9),
+      id
     };
-    axios.post(`${process.env.NEXT_PUBLIC_API_URL}/guides/create/`, newGuide);
-    setGuides([...guides, newGuide]);
-
-    console.log(newGuide);
+   const resp=await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/guides/create/`, newGuide);
+   
+    setGuides([resp.data, ...guides]);
 
     setOpenModal(false);
   };
 
+  
+
+
+
+
   useEffect(() => {
     setSearch(guides);
+
   }, [guides]);
 
+  
   function handleSelectGuide(guide: any) {
     setSelectedGuide(guide);
   }
@@ -103,7 +110,7 @@ export default function Home() {
   return (
     <>
       <AppShell>
-        <Flex w="100%" justify="center" align="center">
+        <Flex w="100%" justify="center" align="center" style={{position:"relative"}}>
           <Container style={{ width: "50%" }}>
             <Text fz="xl" fw={700} my="xl">
               Guides List
@@ -112,8 +119,11 @@ export default function Home() {
             <Input
               placeholder="Search for a guide"
               onChange={handleSearch}
-              style={{ width: "100%" }}
+              style={{ width: "100%",marginBottom:"10px" }}
             />
+            <Button my="md" w="100%" onClick={handleOpenModal}>
+              <IconPlus />
+            </Button>
             <Stack my="md">
               {search.map((guide) => (
                 <GuideItem
@@ -124,9 +134,6 @@ export default function Home() {
                 ></GuideItem>
               ))}
             </Stack>
-            <Button my="md" w="100%" onClick={handleOpenModal}>
-              <IconPlus />
-            </Button>
             <Container>
               <Modal opened={openModal} onClose={() => setOpenModal(false)}>
                 <Input
@@ -153,7 +160,11 @@ export default function Home() {
               </Modal>
             </Container>
           </Container>
-          <Container>
+          <Container 
+          // make this container sticky
+              
+          style={{ position: "sticky", top: "0", alignSelf:"start",marginTop:"200px" }}
+          >
             <GuideCalendar guide={selectedGuide} />
           </Container>
         </Flex>
