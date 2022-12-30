@@ -6,11 +6,13 @@ function ItemBox({
   isSelected,
   collapsed,
   setCollapsed,
+  isCollapsible = false,
   CollapsedComponent,
   children,
 }: {
   handleClick?: any;
   isSelected?: boolean;
+  isCollapsible?: boolean;
   collapsed?: boolean;
   setCollapsed?: any;
   CollapsedComponent?: any;
@@ -19,8 +21,13 @@ function ItemBox({
   const { hovered, ref } = useHover();
 
   function onClick() {
-    handleClick();
-    setCollapsed(!collapsed);
+    if (handleClick) {
+      handleClick();
+    }
+
+    if (isCollapsible) {
+      setCollapsed(!collapsed);
+    }
   }
 
   return (
