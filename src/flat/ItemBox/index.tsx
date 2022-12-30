@@ -39,9 +39,11 @@ function ItemBox({
       }}
     >
       {children}
-      <Collapse in={!!collapsed}>
-        <CollapsedComponent />
-      </Collapse>
+      {CollapsedComponent && (
+        <Collapse in={!!collapsed}>
+          <CollapsedComponent />
+        </Collapse>
+      )}
     </Paper>
   );
 }
