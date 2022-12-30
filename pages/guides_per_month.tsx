@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { AppShell, Flex, Container, Text, Stack } from "@mantine/core";
-import ItemBox from "../src/flat/ItemBox";
+import { AppShell, Flex, Container, Text, Stack, Table } from "@mantine/core";
+import GuideItemTable from "../src/flat/GuideItemTable";
 import axios from "axios";
 
 function GuidesPerMonth() {
@@ -26,19 +26,16 @@ function GuidesPerMonth() {
         align="center"
         style={{ position: "relative" }}
       >
-        <Container style={{maxWidth: 800, width: '100%'}}>
+        <Container style={{ maxWidth: 800, width: "100%" }}>
           <Text fz="xl" fw={700} my="xl">
             Guides List
           </Text>
           <Stack>
             {guides.map((guide: any) => (
-              <ItemBox key={guide.id}>
-                <Text fz="md">{guide.name}</Text>
-                <Text fz="md">{guide.phone}</Text>
-                <Text fz="md" style={{ wordBreak: "break-word" }}>
-                  {guide.notes}
-                </Text>
-              </ItemBox>
+              <GuideItemTable
+                key={guide.id}
+                guide={guide}
+              />
             ))}
           </Stack>
         </Container>

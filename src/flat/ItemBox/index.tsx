@@ -6,26 +6,25 @@ function ItemBox({
   isSelected,
   collapsed,
   setCollapsed,
-  isCollapsible = false,
   CollapsedComponent,
   children,
 }: {
   handleClick?: any;
   isSelected?: boolean;
-  isCollapsible?: boolean;
   collapsed?: boolean;
   setCollapsed?: any;
-  CollapsedComponent?: any;
+  CollapsedComponent?: JSX.Element;
   children: React.ReactNode;
 }) {
   const { hovered, ref } = useHover();
+
 
   function onClick() {
     if (handleClick) {
       handleClick();
     }
 
-    if (isCollapsible) {
+    if (CollapsedComponent && setCollapsed) {
       setCollapsed(!collapsed);
     }
   }
@@ -47,9 +46,7 @@ function ItemBox({
     >
       {children}
       {CollapsedComponent && (
-        <Collapse in={!!collapsed}>
-          <CollapsedComponent />
-        </Collapse>
+        <Collapse in={!!collapsed}>{CollapsedComponent}</Collapse>
       )}
     </Paper>
   );
