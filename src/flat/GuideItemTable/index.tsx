@@ -14,20 +14,36 @@ function GuideItemTable({ guide }: { guide: any }) {
         <Table>
           <thead>
             <tr>
-              <th>Element position</th>
-              <th>Element name</th>
-              <th>Symbol</th>
-              <th>Atomic mass</th>
+              <th>Date</th>
+              <th>Tour</th>
+              <th>Fee/tour</th>
+              <th>Extra sup</th>
+              <th>Total sum</th>
             </tr>
           </thead>
           <tbody>
-            <tr key={guide.id}>
-              <td>{guide.name}</td>
-              <td>{guide.name}</td>
-              <td>{guide.name}</td>
-              <td>{guide.name}</td>
-            </tr>
+            {guide.tours.map((tour: any) => {
+              return (
+                <tr key={tour.id}>
+                  <td>{tour.day}</td>
+                  <td>{tour.name}</td>
+                  <td>{guide.fee}</td>
+                  <td>{tour.supplementary_fee}</td>
+                  <td>{tour.sum}</td>
+                </tr>
+              );
+            })}
           </tbody>
+          <tfoot>
+            {" "}
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>{guide.total}</th>
+            </tr>
+          </tfoot>
         </Table>
       }
     >

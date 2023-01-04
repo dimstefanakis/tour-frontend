@@ -52,7 +52,7 @@ function ItemBox({
     >
       {children}
       {CollapsedComponent && (
-        <Collapse in={!!collapsed}>{CollapsedComponent}</Collapse>
+        <Collapse mt="lg" in={!!collapsed}>{CollapsedComponent}</Collapse>
       )}
       {collapsed && CollapsedComponent && (
         <Center style={{ paddingTop: "10px" }}>
