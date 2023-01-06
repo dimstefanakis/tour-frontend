@@ -13,16 +13,7 @@ import { Calendar } from "@mantine/dates";
 import DailyProgramTable from "../src/flat/DailyProgramTable";
 import axios from "axios";
 
-const dummyData = [
-  {
-    id: 1,
-    name: "Viking Sky - Athens",
-  },
-  {
-    id: 2,
-    name: "Viking Sea - Volos",
-  },
-];
+
 
 function DailyProgram() {
   const [tours, setTours] = useState([]);
