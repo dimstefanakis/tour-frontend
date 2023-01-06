@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { MantineProvider } from "@mantine/core";
+import Layout from "../src/flat/Layout";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,9 @@ export default function App({ Component, pageProps }: AppProps) {
           colorScheme: "light",
         }}
       >
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </MantineProvider>
     </QueryClientProvider>
   );

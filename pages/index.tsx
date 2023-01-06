@@ -6,6 +6,7 @@ import {
   Input,
   Text,
   Textarea,
+  Navbar,
   AppShell,
 } from "@mantine/core";
 import { Modal, Button, Stack, Flex } from "@mantine/core";
@@ -102,75 +103,73 @@ export default function Home() {
 
   return (
     <>
-      <AppShell>
-        <Flex
-          w="100%"
-          justify="center"
-          align="center"
-          style={{ position: "relative" }}
-        >
-          <Container style={{ width: "50%" }}>
-            <Text fz="xl" fw={700} my="xl">
-              Guides List
-            </Text>
-            <Input
-              placeholder="Search for a guide"
-              onChange={handleSearch}
-              style={{ width: "100%", marginBottom: "10px" }}
-            />
-            <Button my="md" w="100%" onClick={handleOpenModal}>
-              <IconPlus />
-            </Button>
-            <Stack my="md">
-              {search.map((guide) => (
-                <GuideItem
-                  key={guide.id}
-                  guide={guide}
-                  isSelected={guide.id === selectedGuide?.id}
-                  onClick={handleSelectGuide}
-                ></GuideItem>
-              ))}
-            </Stack>
-            <Container>
-              <Modal opened={openModal} onClose={() => setOpenModal(false)}>
-                <Input
-                  placeholder="Guide's name"
-                  name="name"
-                  onChange={handleChange}
-                  style={{ marginTop: "10px" }}
-                />
-                <Input
-                  placeholder="Guide's phone number"
-                  name="phone"
-                  onChange={handleChange}
-                  style={{ marginTop: "10px" }}
-                />
-                <Textarea
-                  placeholder="Notes about the guide"
-                  name="notes"
-                  onChange={handleChange}
-                  style={{ marginTop: "10px" }}
-                />
-                <Button onClick={handleSubmit} style={{ marginTop: "10px" }}>
-                  Submit
-                </Button>
-              </Modal>
-            </Container>
+      <Flex
+        w="100%"
+        justify="center"
+        align="center"
+        style={{ position: "relative" }}
+      >
+        <Container style={{ width: "50%" }}>
+          <Text fz="xl" fw={700} my="xl">
+            Guides List
+          </Text>
+          <Input
+            placeholder="Search for a guide"
+            onChange={handleSearch}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+          <Button my="md" w="100%" onClick={handleOpenModal}>
+            <IconPlus />
+          </Button>
+          <Stack my="md">
+            {search.map((guide) => (
+              <GuideItem
+                key={guide.id}
+                guide={guide}
+                isSelected={guide.id === selectedGuide?.id}
+                onClick={handleSelectGuide}
+              ></GuideItem>
+            ))}
+          </Stack>
+          <Container>
+            <Modal opened={openModal} onClose={() => setOpenModal(false)}>
+              <Input
+                placeholder="Guide's name"
+                name="name"
+                onChange={handleChange}
+                style={{ marginTop: "10px" }}
+              />
+              <Input
+                placeholder="Guide's phone number"
+                name="phone"
+                onChange={handleChange}
+                style={{ marginTop: "10px" }}
+              />
+              <Textarea
+                placeholder="Notes about the guide"
+                name="notes"
+                onChange={handleChange}
+                style={{ marginTop: "10px" }}
+              />
+              <Button onClick={handleSubmit} style={{ marginTop: "10px" }}>
+                Submit
+              </Button>
+            </Modal>
           </Container>
-          <Container
-            // make this container sticky
+        </Container>
+        <Container
+          // make this container sticky
 
-            style={{
-              position: "sticky",
-              top: "0",
-              alignSelf: "start",
-              marginTop: "200px",
-            }}
-          >
-            <GuideCalendar guide={selectedGuide} />
-          </Container>
-        </Flex>
-      </AppShell>
+          style={{
+            position: "sticky",
+            top: "0",
+            alignSelf: "start",
+            marginTop: "200px",
+          }}
+        >
+          <GuideCalendar guide={selectedGuide} />
+        </Container>
+      </Flex>
     </>
   );
 }

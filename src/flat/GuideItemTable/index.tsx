@@ -35,7 +35,6 @@ function GuideItemTable({ guide }: { guide: any }) {
             })}
           </tbody>
           <tfoot>
-            {" "}
             <tr>
               <th></th>
               <th></th>
