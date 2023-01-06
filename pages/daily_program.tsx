@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
   AppShell,
   Button,
-  Collapse,
+  Popover,
   Container,
   Flex,
   Text,
@@ -15,8 +15,8 @@ import axios from "axios";
 
 function DailyProgram() {
   const [destinations, setDestinations] = useState([]);
+  const [selectedDate, setSelectedDate] = useState<any>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [calendarValue, setCalendarValue] = useState<any>(new Date());
   const [collapseOpen, setCollapseOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -47,6 +47,14 @@ function DailyProgram() {
         <Text fz="xl" fw={700} my="xl">
           Guides List
         </Text>
+        <Popover position="bottom" withArrow shadow="md">
+          <Popover.Target>
+            <Button>Change Date</Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Calendar />
+          </Popover.Dropdown>
+        </Popover>
         <Stack>
           {destinations.map((destination: any, index: number) => (
             <>

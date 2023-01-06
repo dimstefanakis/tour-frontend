@@ -16,13 +16,15 @@ function GuideCalendar({ guide }: { guide: any }) {
 
   async function postGuideAvailability(status: string) {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/guides/${guide.id}/availability/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/guides/${guide.id}/create_availability_multiple_dates/`,
       {
-        dates: selectedDates,
+        dates: selectedDates.map((date) => date.toISOString().slice(0, 10)),
         status: status,
       }
     );
-    setAvailability(response.data);
+    getGuideAvailability();
+    setSelectedDates([]);
+    // setAvailability(response.data);
   }
 
   useEffect(() => {
@@ -41,7 +43,7 @@ function GuideCalendar({ guide }: { guide: any }) {
             const response = availability?.find(
               (a: any) => a.day == date.toISOString().slice(0, 10)
             );
-            return response?.status == "Y" ? (
+            return response?.status == "Y" || response?.status == 'N' ? (
               <Indicator
                 size={6}
                 color={response?.status == "Y" ? "green" : "red"}
@@ -71,9 +73,15 @@ function GuideCalendar({ guide }: { guide: any }) {
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item>Available</Menu.Item>
-            <Menu.Item color="red">Not Available</Menu.Item>
-            <Menu.Item color="red">Couldn&apos;t Reach</Menu.Item>
+            <Menu.Item onClick={() => postGuideAvailability("Y")}>
+              Available
+            </Menu.Item>
+            <Menu.Item onClick={() => postGuideAvailability("N")} color="red">
+              Not Available
+            </Menu.Item>
+            <Menu.Item onClick={() => postGuideAvailability("NA")} color="red">
+              Couldn&apos;t Reach
+            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       </Stack>

@@ -8,16 +8,16 @@ function Layout({ children }: { children: React.ReactNode }) {
       navbar={
         <Navbar p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
           <Navbar.Section>
-            <Link active={true} label="Home" link="/" />
+            <Link active={true} label="Home" link="" />
           </Navbar.Section>
           <Navbar.Section>
-            <Link active={false} label="Daily Program" link="/daily_program" />
+            <Link active={false} label="Daily Program" link="daily_program" />
           </Navbar.Section>
           <Navbar.Section>
             <Link
               active={false}
               label="Guides Per Month"
-              link="/guides_per_month"
+              link="guides_per_month"
             />
           </Navbar.Section>
         </Navbar>
@@ -42,7 +42,7 @@ function Link({
   return (
     <NavLink
       component={NextLink}
-      active={router.pathname === link}
+      active={router.pathname === `/${link}`}
       label={label}
       href={`/${link}`}
     />
