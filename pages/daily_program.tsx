@@ -11,18 +11,14 @@ import {
 } from "@mantine/core";
 import { Calendar } from "@mantine/dates";
 import DailyProgramTable from "../src/flat/DailyProgramTable";
+import getFormattedDate from "../src/utils/getFormattedDate";
 import axios from "axios";
 
 function DailyProgram() {
   const [destinations, setDestinations] = useState([]);
+  const [availableGuides, setAvailableGuides] = useState([]);
   const [selectedDate, setSelectedDate] = useState<any>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [collapseOpen, setCollapseOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
-
-  // const handleCalendarOpen = (id: any) => {
-  //   setCalendarOpen(!calendarOpen);
-  // };
 
   async function getDestinations() {
     const response = await axios.get(
@@ -36,6 +32,42 @@ function DailyProgram() {
     getDestinations();
   }, []);
 
+  const formatDate = (date: any) => {
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const day = date.getDate();
+    const monthIndex = date.getMonth();
+    const year = date.getFullYear();
+    return monthNames[monthIndex] + " " + day + ", " + year;
+  };
+
+  const getGuides = async () => {
+    let date = getFormattedDate(selectedDate);
+    let response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/guides/availability_by_day/`,
+      {
+        day: date,
+      }
+    );
+    setAvailableGuides(response.data);
+  };
+
+  useEffect(() => {
+    getGuides();
+  }, [selectedDate]);
+
   return (
     <Flex
       w="100%"
@@ -47,19 +79,29 @@ function DailyProgram() {
         <Text fz="xl" fw={700} my="xl">
           Guides List
         </Text>
-        <Popover position="bottom" withArrow shadow="md">
+        <Popover opened={calendarOpen} position="bottom" withArrow shadow="md">
           <Popover.Target>
-            <Button>Change Date</Button>
+            <Button onClick={() => setCalendarOpen(true)}>
+              {formatDate(selectedDate)}
+            </Button>
           </Popover.Target>
           <Popover.Dropdown>
-            <Calendar />
+            <Calendar
+              onChange={(value) => {
+                setSelectedDate(value);
+                setCalendarOpen(false);
+              }}
+              value={selectedDate}
+            />
           </Popover.Dropdown>
         </Popover>
-        <Stack>
+        <Stack mt="xl">
           {destinations.map((destination: any, index: number) => (
-            <>
-              <DailyProgramTable key={index} destination={destination} />
-            </>
+            <DailyProgramTable
+              key={index}
+              availableGuides={availableGuides}
+              destination={destination}
+            />
           ))}
         </Stack>
       </Container>

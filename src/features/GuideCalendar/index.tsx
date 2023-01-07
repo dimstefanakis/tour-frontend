@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Calendar } from "@mantine/dates";
 import { Indicator, Stack, Button, Menu } from "@mantine/core";
+import getFormattedDate from "../../utils/getFormattedDate";
 import axios from "axios";
 
 function GuideCalendar({ guide }: { guide: any }) {
@@ -18,7 +19,7 @@ function GuideCalendar({ guide }: { guide: any }) {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/guides/${guide.id}/create_availability_multiple_dates/`,
       {
-        dates: selectedDates.map((date) => date.toISOString().slice(0, 10)),
+        dates: selectedDates.map((date) => getFormattedDate(date)),
         status: status,
       }
     );
@@ -41,9 +42,9 @@ function GuideCalendar({ guide }: { guide: any }) {
             // console.log(date);
             const day = date.getDate();
             const response = availability?.find(
-              (a: any) => a.day == date.toISOString().slice(0, 10)
+              (a: any) => a.day == getFormattedDate(date)
             );
-            return response?.status == "Y" || response?.status == 'N' ? (
+            return response?.status == "Y" || response?.status == "N" ? (
               <Indicator
                 size={6}
                 color={response?.status == "Y" ? "green" : "red"}

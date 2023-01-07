@@ -12,21 +12,14 @@ import {
 } from "@mantine/core";
 import axios from "axios";
 
-function DailyProgramTable({ destination }: any) {
+function DailyProgramTable({ destination, availableGuides }: any) {
   const [collapsed, setCollapsed] = useState(false);
   const [counter, setCounter] = useState(0);
-  const [guides, setGuides] = useState([]);
   const [tours, setTours] = useState([]);
 
   const handleAdd = () => {
     setCounter(counter + 1);
     console.log(destination);
-  };
-
-  const getGuides = () => {
-    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/guides/`).then((res) => {
-      setGuides(res.data);
-    });
   };
 
   const getTours = () => {
@@ -36,7 +29,6 @@ function DailyProgramTable({ destination }: any) {
   };
 
   useEffect(() => {
-    getGuides();
     getTours();
   }, []);
 
@@ -53,18 +45,18 @@ function DailyProgramTable({ destination }: any) {
                   w="40%"
                   label="Select tour"
                   placeholder="tour"
-                  data={tours.map((tour: any)=> {
+                  data={tours.map((tour: any) => {
                     return {
                       label: tour.name,
                       value: tour.id,
-                    }
+                    };
                   })}
                 />
                 <Select
                   w="40%"
                   label="Select guide"
                   placeholder="guide"
-                  data={guides.map((guide: any) => {
+                  data={availableGuides.map((guide: any) => {
                     return {
                       label: guide.name,
                       value: guide.id,
@@ -74,7 +66,7 @@ function DailyProgramTable({ destination }: any) {
               </Flex>
             </>
           ))}
-          <Center my='xl'>
+          <Center my="xl">
             <Button onClick={handleAdd}>Add tour</Button>
           </Center>
         </Container>
