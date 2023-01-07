@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { AppShell, Flex, Container, Text, Stack, Table } from "@mantine/core";
 import GuideItemTable from "../src/flat/GuideItemTable";
+import MonthSelector from "../src/features/MonthSelectionDropdown";
 import axios from "axios";
 
 function GuidesPerMonth() {
@@ -29,6 +30,7 @@ function GuidesPerMonth() {
         <Text fz="xl" fw={700} my="xl">
           Guides List
         </Text>
+        <MonthSelector/>
         <Stack>
           {guides.map((guide: any) => (
             <GuideItemTable key={guide.id} guide={guide} />

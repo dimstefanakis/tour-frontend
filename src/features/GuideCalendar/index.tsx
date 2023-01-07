@@ -44,10 +44,18 @@ function GuideCalendar({ guide }: { guide: any }) {
             const response = availability?.find(
               (a: any) => a.day == getFormattedDate(date)
             );
-            return response?.status == "Y" || response?.status == "N" ? (
+            return response?.status == "Y" ||
+              response?.status == "N" ||
+              response?.status == "NA" ? (
               <Indicator
                 size={6}
-                color={response?.status == "Y" ? "green" : "red"}
+                color={
+                  response?.status == "Y"
+                    ? "green"
+                    : response?.status == "N"
+                    ? "red"
+                    : "yellow"
+                }
                 offset={8}
               >
                 <div>{day}</div>
