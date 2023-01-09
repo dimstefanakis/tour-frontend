@@ -47,7 +47,7 @@ const MonthSelector = () => {
           value: `${month}-${year}`,
         };
       });
-      availableMonths = availableMonths.filter((month) => month !== null);
+      availableMonths = availableMonths.filter((date) => date !== null);
       return availableMonths;
     })
     .flat();
