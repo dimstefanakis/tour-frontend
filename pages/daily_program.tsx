@@ -24,7 +24,6 @@ function DailyProgram() {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/destinations/`
     );
-    console.log(response.data);
     setDestinations(response.data);
   }
 
@@ -99,6 +98,7 @@ function DailyProgram() {
           {destinations.map((destination: any, index: number) => (
             <DailyProgramTable
               key={index}
+              date={selectedDate}
               availableGuides={availableGuides}
               destination={destination}
             />
