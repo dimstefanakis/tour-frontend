@@ -54,7 +54,7 @@ const MonthSelector = () => {
 
   return (
     <Select
-      label="Select Month"
+      label=""
       value={`${selectedMonth}-${selectedYear}`}
       onChange={handleChange}
       data={options}

@@ -6,13 +6,82 @@ import {
   Container,
   Flex,
   Text,
-  Table,
+  Tabs,
+  TabsProps,
   Stack,
 } from "@mantine/core";
 import { Calendar } from "@mantine/dates";
 import DailyProgramTable from "../src/flat/DailyProgramTable";
+import ConfirmedGuides from "../src/features/ConfirmedGuides";
 import getFormattedDate from "../src/utils/getFormattedDate";
 import axios from "axios";
+
+function StyledTabs(props: TabsProps) {
+  return (
+    <Tabs
+      unstyled
+      styles={(theme) => ({
+        tab: {
+          ...theme.fn.focusStyles(),
+          backgroundColor:
+            theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+          color:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[0]
+              : theme.colors.gray[9],
+          border: `1px solid ${
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[6]
+              : theme.colors.gray[4]
+          }`,
+          padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
+          cursor: "pointer",
+          fontSize: theme.fontSizes.sm,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "50%",
+
+          "&:disabled": {
+            opacity: 0.5,
+            cursor: "not-allowed",
+          },
+
+          "&:not(:first-of-type)": {
+            borderLeft: 0,
+          },
+
+          "&:first-of-type": {
+            borderTopLeftRadius: theme.radius.md,
+            borderBottomLeftRadius: theme.radius.md,
+          },
+
+          "&:last-of-type": {
+            borderTopRightRadius: theme.radius.md,
+            borderBottomRightRadius: theme.radius.md,
+          },
+
+          "&[data-active]": {
+            backgroundColor: theme.colors.blue[7],
+            borderColor: theme.colors.blue[7],
+            color: theme.white,
+          },
+        },
+
+        tabIcon: {
+          marginRight: theme.spacing.xs,
+          display: "flex",
+          alignItems: "center",
+        },
+
+        tabsList: {
+          display: "flex",
+        },
+      })}
+      {...props}
+    />
+  );
+}
 
 function DailyProgram() {
   const [destinations, setDestinations] = useState([]);
@@ -76,7 +145,7 @@ function DailyProgram() {
     >
       <Container style={{ maxWidth: 800, width: "100%" }}>
         <Text fz="xl" fw={700} my="xl">
-          Guides List
+          Daily Program
         </Text>
         <Popover opened={calendarOpen} position="bottom" withArrow shadow="md">
           <Popover.Target>
@@ -94,16 +163,27 @@ function DailyProgram() {
             />
           </Popover.Dropdown>
         </Popover>
-        <Stack mt="xl">
-          {destinations.map((destination: any, index: number) => (
-            <DailyProgramTable
-              key={index}
-              date={selectedDate}
-              availableGuides={availableGuides}
-              destination={destination}
-            />
-          ))}
-        </Stack>
+        <StyledTabs defaultValue="program">
+          <Tabs.List my={"xl"}>
+            <Tabs.Tab value="program">Program</Tabs.Tab>
+            <Tabs.Tab value="guides">Guides</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="program">
+            <Stack mt="xl">
+              {destinations.map((destination: any, index: number) => (
+                <DailyProgramTable
+                  key={index}
+                  date={selectedDate}
+                  availableGuides={availableGuides}
+                  destination={destination}
+                />
+              ))}
+            </Stack>
+          </Tabs.Panel>
+          <Tabs.Panel value="guides">
+            <ConfirmedGuides date={selectedDate} />
+          </Tabs.Panel>
+        </StyledTabs>
       </Container>
     </Flex>
   );

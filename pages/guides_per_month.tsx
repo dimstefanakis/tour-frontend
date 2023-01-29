@@ -31,7 +31,7 @@ function GuidesPerMonth() {
           Guides List
         </Text>
         <MonthSelector/>
-        <Stack>
+        <Stack mt="xl">
           {guides.map((guide: any) => (
             <GuideItemTable key={guide.id} guide={guide} />
           ))}
