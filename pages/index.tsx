@@ -139,6 +139,7 @@ export default function Home() {
                 isSelected={guide.id === selectedGuide?.id}
                 setGuides={setGuides}
                 onClick={handleSelectGuide}
+                getGuides={getGuides}
               ></GuideItem>
             ))}
           </Stack>
@@ -169,8 +170,6 @@ export default function Home() {
           </Container>
         </Container>
         <Container
-          // make this container sticky
-
           style={{
             position: "sticky",
             top: "0",

@@ -2,17 +2,20 @@ import { Button, Paper, Text ,Modal} from "@mantine/core";
 import ItemBox from "../ItemBox";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { Input } from "@mantine/core";
 
 function GuideItem({
   guide,
   isSelected,
   onClick,
-  setGuides
+  setGuides,
+  getGuides
 }: {
   guide: any;
   isSelected: boolean;
   onClick: any;
   setGuides: any;
+  getGuides: any;
 }) {
   function handleClick() {
     onClick(guide);
@@ -45,6 +48,8 @@ function GuideItem({
     setOpenModal(true);
   };
 
+
+
   //edit guide
   const [editGuide, setEditGuide] = useState({
     name: guide.name,
@@ -65,7 +70,11 @@ function GuideItem({
       .catch((err) => {
         console.log(err);
       });
+      setOpenModal(false);
+      getGuides();
   }
+
+  
 
   return (
     <ItemBox handleClick={handleClick} isSelected={isSelected}>
@@ -74,8 +83,11 @@ function GuideItem({
       <Text fz="md" style={{ wordBreak: "break-word" }}>
         {guide.notes}
       </Text>
-      <Button onClick={handleDelete}>Delete</Button>
-      <Button onClick={handleEditModal}>Edit</Button>
+      <Button onClick={handleDelete} 
+      // add margin to the right
+      style={{ marginRight: "10px",width:"100px" }}
+      >Delete</Button>
+      <Button onClick={handleEditModal} style={{width:"100px"}}>Edit</Button>
       {openModal && (
         <Modal
           opened={openModal}
@@ -86,31 +98,34 @@ function GuideItem({
           <Text fz="xl" fw={700} my="xl">
             Edit Guide
           </Text>
-          <input
+          <Input
             placeholder="Guide's name"
             defaultValue={guide.name}
             value={editGuide.name}
             onChange={(e) =>
               setEditGuide({ ...editGuide, name: e.target.value })
             }
+            style={{ width: "100%", marginBottom: "10px" }}
           />
-          <input
+          <Input
             placeholder="Guide's phone"
             defaultValue={guide.phone}
             value={editGuide.phone}
             onChange={(e) =>
               setEditGuide({ ...editGuide, phone: e.target.value===""?guide.phone:e.target.value })
             }
+            style={{ width: "100%", marginBottom: "10px" }}
           />
-          <input
+          <Input
             placeholder="Guide's notes"
             defaultValue={guide.notes}
             value={editGuide.notes}
             onChange={(e) =>
               setEditGuide({ ...editGuide, notes: e.target.value })
             }
+            style={{ width: "100%", marginBottom: "10px" }}
           />
-          <Button onClick={handleEdit}>Edit</Button>
+          <Button onClick={handleEdit}>Save</Button>
         </Modal>
       )}
     </ItemBox>
