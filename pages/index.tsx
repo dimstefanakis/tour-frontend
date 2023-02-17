@@ -69,6 +69,16 @@ export default function Home() {
     getGuides();
   }, []);
 
+  // after a guide is deleted from the api, update the guides list
+  const updateGuides = async () => {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/guides/`
+    );
+    setGuides(response.data);
+  };
+
+  
+
   const handleChange = (e: any) => {
     setNewGuides((prev: any) => ({
       ...prev,
@@ -127,7 +137,9 @@ export default function Home() {
                 key={guide.id}
                 guide={guide}
                 isSelected={guide.id === selectedGuide?.id}
+                setGuides={setGuides}
                 onClick={handleSelectGuide}
+                getGuides={getGuides}
               ></GuideItem>
             ))}
           </Stack>
@@ -163,8 +175,6 @@ export default function Home() {
           </Container>
         </Container>
         <Container
-          // make this container sticky
-
           style={{
             position: "sticky",
             top: "0",
