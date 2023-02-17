@@ -9,8 +9,10 @@ import {
   Tabs,
   TabsProps,
   Stack,
+  Modal,
+  Input,
 } from "@mantine/core";
-import { Calendar } from "@mantine/dates";
+import { Calendar, DatePicker, TimeInput } from "@mantine/dates";
 import DailyProgramTable from "../src/flat/DailyProgramTable";
 import ConfirmedGuides from "../src/features/ConfirmedGuides";
 import getFormattedDate from "../src/utils/getFormattedDate";
@@ -84,10 +86,12 @@ function StyledTabs(props: TabsProps) {
 }
 
 function DailyProgram() {
-  const [destinations, setDestinations] = useState([]);
+  const [destinations, setDestinations] = useState<any[]>([]);
   const [availableGuides, setAvailableGuides] = useState([]);
   const [selectedDate, setSelectedDate] = useState<any>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [createdDestination, setCreatedDestination] = useState<any>({});
+  const [openModal, setOpenModal] = useState(false);
 
   async function getDestinations() {
     const response = await axios.get(
@@ -136,6 +140,75 @@ function DailyProgram() {
     getGuides();
   }, [selectedDate]);
 
+  const handleChange = (e: any) => {
+    setCreatedDestination((prev: any) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  async function handleSubmit() {
+    const eta = new Date(
+      createdDestination.eta_date.getFullYear(),
+      createdDestination.eta_date.getMonth(),
+      createdDestination.eta_date.getDate(),
+      createdDestination.eta_time.getHours(),
+      createdDestination.eta_time.getMinutes(),
+      createdDestination.eta_time.getSeconds()
+    );
+
+    const etd = new Date(
+      createdDestination.etd_date.getFullYear(),
+      createdDestination.etd_date.getMonth(),
+      createdDestination.etd_date.getDate(),
+      createdDestination.etd_time.getHours(),
+      createdDestination.etd_time.getMinutes(),
+      createdDestination.etd_time.getSeconds()
+    );
+
+    let response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/create_destination/`,
+      {
+        eta: eta,
+        etd: etd,
+        vessel: createdDestination.vessel,
+        location: createdDestination.location,
+      }
+    );
+    setDestinations((prev) => [...prev, response.data]);
+    setOpenModal(false);
+  }
+
+  function onEtaDateChange(date: any) {
+    setCreatedDestination((prev: any) => ({
+      ...prev,
+      eta_date: date,
+    }));
+  }
+
+  function onEtaTimeChange(time: any) {
+    setCreatedDestination((prev: any) => ({
+      ...prev,
+      eta_time: time,
+    }));
+  }
+
+  function onEtdDateChange(date: any) {
+    setCreatedDestination((prev: any) => ({
+      ...prev,
+      etd_date: date,
+    }));
+  }
+
+  function onEtdTimeChange(time: any) {
+    setCreatedDestination((prev: any) => ({
+      ...prev,
+      etd_time: time,
+    }));
+  }
+
+  console.log(createdDestination);
+
   return (
     <Flex
       w="100%"
@@ -178,6 +251,72 @@ function DailyProgram() {
                   destination={destination}
                 />
               ))}
+              <Modal
+                opened={openModal}
+                onClose={() => setOpenModal(false)}
+                title="Add Destination"
+                size="sm"
+              >
+                <Input
+                  required
+                  placeholder="Vessel name"
+                  name="vessel"
+                  onChange={handleChange}
+                  style={{ marginTop: "10px" }}
+                />
+                <Input
+                  required
+                  placeholder="File name"
+                  name="file_name"
+                  onChange={handleChange}
+                  style={{ marginTop: "10px" }}
+                />
+                <Input
+                  required
+                  placeholder="Location"
+                  name="location"
+                  onChange={handleChange}
+                  style={{ marginTop: "10px" }}
+                />
+                <Flex style={{ marginTop: "10px" }}>
+                  <DatePicker
+                    required
+                    placeholder="Arrival date"
+                    onChange={onEtaDateChange}
+                    style={{ marginRight: 5, width: "100%" }}
+                  />
+                  <TimeInput
+                    required
+                    placeholder="Arrival time"
+                    onChange={onEtaTimeChange}
+                    style={{ width: "100%" }}
+                  />
+                </Flex>
+                <Flex style={{ marginTop: "10px" }}>
+                  <DatePicker
+                    required
+                    placeholder="Departure date"
+                    onChange={onEtdDateChange}
+                    style={{ marginRight: 5, width: "100%" }}
+                  />
+                  <TimeInput
+                    required
+                    placeholder="Departure time"
+                    onChange={onEtdTimeChange}
+                    style={{ width: "100%" }}
+                  />
+                </Flex>
+                <Button
+                  style={{ marginTop: "10px" }}
+                  onClick={handleSubmit}
+                  type="submit"
+                >
+                  Confirm
+                </Button>
+              </Modal>
+              <Button onClick={() => setOpenModal(true)}>
+                Add Destination
+              </Button>
             </Stack>
           </Tabs.Panel>
           <Tabs.Panel value="guides">

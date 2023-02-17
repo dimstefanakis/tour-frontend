@@ -132,7 +132,12 @@ export default function Home() {
             ))}
           </Stack>
           <Container>
-            <Modal opened={openModal} onClose={() => setOpenModal(false)}>
+            <Modal
+              title="Add Guide"
+              size="sm"
+              opened={openModal}
+              onClose={() => setOpenModal(false)}
+            >
               <Input
                 placeholder="Guide's name"
                 name="name"
