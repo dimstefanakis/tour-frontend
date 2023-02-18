@@ -94,15 +94,18 @@ function DailyProgram() {
   const [openModal, setOpenModal] = useState(false);
 
   async function getDestinations() {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/destinations/`
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/get_destinations_by_date/`,
+      {
+        date: getFormattedDate(selectedDate),
+      }
     );
     setDestinations(response.data);
   }
 
   useEffect(() => {
     getDestinations();
-  }, []);
+  }, [selectedDate]);
 
   const formatDate = (date: any) => {
     const monthNames = [
@@ -157,20 +160,10 @@ function DailyProgram() {
       createdDestination.eta_time.getSeconds()
     );
 
-    const etd = new Date(
-      createdDestination.etd_date.getFullYear(),
-      createdDestination.etd_date.getMonth(),
-      createdDestination.etd_date.getDate(),
-      createdDestination.etd_time.getHours(),
-      createdDestination.etd_time.getMinutes(),
-      createdDestination.etd_time.getSeconds()
-    );
-
     let response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/create_destination/`,
       {
         eta: eta,
-        etd: etd,
         vessel: createdDestination.vessel,
         location: createdDestination.location,
       }
@@ -289,20 +282,6 @@ function DailyProgram() {
                     required
                     placeholder="Arrival time"
                     onChange={onEtaTimeChange}
-                    style={{ width: "100%" }}
-                  />
-                </Flex>
-                <Flex style={{ marginTop: "10px" }}>
-                  <DatePicker
-                    required
-                    placeholder="Departure date"
-                    onChange={onEtdDateChange}
-                    style={{ marginRight: 5, width: "100%" }}
-                  />
-                  <TimeInput
-                    required
-                    placeholder="Departure time"
-                    onChange={onEtdTimeChange}
                     style={{ width: "100%" }}
                   />
                 </Flex>

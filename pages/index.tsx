@@ -77,8 +77,6 @@ export default function Home() {
     setGuides(response.data);
   };
 
-  
-
   const handleChange = (e: any) => {
     setNewGuides((prev: any) => ({
       ...prev,

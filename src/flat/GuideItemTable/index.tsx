@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table, Text } from "@mantine/core";
+import { Table, Text, NumberInput } from "@mantine/core";
 import ItemBox from "../ItemBox";
 
 function GuideItemTable({ guide }: { guide: any }) {
@@ -28,7 +28,20 @@ function GuideItemTable({ guide }: { guide: any }) {
                   <td>{tour.day}</td>
                   <td>{tour.name}</td>
                   <td>{guide.fee}</td>
-                  <td>{tour.supplementary_fee}</td>
+                  <td>
+                    <NumberInput
+                      defaultValue={tour.supplementary_fee}
+                      parser={(value: any) => value.replace(/\$\s?|(,*)/g, "")}
+                      formatter={(value) =>
+                        !Number.isNaN(parseFloat(value as any))
+                          ? `€ ${value}`.replace(
+                              /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                              ","
+                            )
+                          : "€ "
+                      }
+                    />
+                  </td>
                   <td>{tour.sum}</td>
                 </tr>
               );
