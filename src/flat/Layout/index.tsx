@@ -1,12 +1,14 @@
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { AppShell, Navbar, Text, NavLink } from "@mantine/core";
+import { AppShell, Navbar, Text, NavLink, Image } from "@mantine/core";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
       navbar={
         <Navbar p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
+          <Image src='/logo.png' alt="logo" mb={5}>
+          </Image>
           <Navbar.Section>
             <Link active={true} label="Home" link="" />
           </Navbar.Section>

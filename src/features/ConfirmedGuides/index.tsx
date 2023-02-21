@@ -38,7 +38,7 @@ function ConfirmedGuides({ date }: any) {
                   return (
                     <tr key={tour.id}>
                       <td>{guide.name}</td>
-                      <td>{tour.location.name}</td>
+                      <td>{tour.tour_location.name}</td>
                     </tr>
                   );
                 })}
