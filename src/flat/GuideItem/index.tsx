@@ -1,15 +1,14 @@
-import { Button, Paper, Text ,Modal} from "@mantine/core";
+import { useState, useEffect } from "react";
+import { Button, Paper, Text, Modal, Input } from "@mantine/core";
 import ItemBox from "../ItemBox";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import { Input } from "@mantine/core";
 
 function GuideItem({
   guide,
   isSelected,
   onClick,
   setGuides,
-  getGuides
+  getGuides,
 }: {
   guide: any;
   isSelected: boolean;
@@ -22,46 +21,43 @@ function GuideItem({
   }
 
   const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // delete a guide
-  async function handleDelete(e:any) {
+  async function handleDelete(e: any) {
     e.stopPropagation();
+    setDeleteLoading(true);
     await axios
-      .delete(`http://localhost:8000/api/v1/guides/${guide.id}/`)
+      .delete(`${process.env.NEXT_PUBLIC_API_URL}/guides/${guide.id}/`)
       .then((res) => {
         // get the new list of guides
-        axios
-          .get("http://localhost:8000/api/v1/guides/")
-          .then((res) => {
-            setGuides(res.data);
-          }
-          );
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/guides/`).then((res) => {
+          setDeleteLoading(false);
+          setOpenDeleteModal(false);
+          setGuides(res.data);
+        });
       });
   }
 
-      
-  
-
   // edit
-  const handleEditModal = (e:any) => {
+  const handleEditModal = (e: any) => {
     e.stopPropagation();
     setOpenModal(true);
   };
 
-
-
   //edit guide
   const [editGuide, setEditGuide] = useState({
     name: guide.name,
-    phone:  guide.phone,
+    phone: guide.phone,
     notes: guide.notes,
   });
 
-  // axios.patchh guide
+  // axios.patch guide
   async function handleEdit() {
     await axios
       .patch(
-        `http://localhost:8000/api/v1/guides/${guide.id}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/guides/${guide.id}/`,
         editGuide
       )
       .then((res) => {
@@ -70,11 +66,9 @@ function GuideItem({
       .catch((err) => {
         console.log(err);
       });
-      setOpenModal(false);
-      getGuides();
+    setOpenModal(false);
+    getGuides();
   }
-
-  
 
   return (
     <ItemBox handleClick={handleClick} isSelected={isSelected}>
@@ -83,21 +77,42 @@ function GuideItem({
       <Text fz="md" style={{ wordBreak: "break-word" }}>
         {guide.notes}
       </Text>
-      <Button onClick={handleDelete} 
-      // add margin to the right
-      style={{ marginRight: "10px",width:"100px" }}
-      >Delete</Button>
-      <Button onClick={handleEditModal} style={{width:"100px"}}>Edit</Button>
+      <Modal opened={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
+        <Text fz="md" fw={700} my="xl">
+          Are you sure you want to delete this guide?
+        </Text>
+        <Button
+          onClick={() => setOpenDeleteModal(false)}
+          style={{ marginRight: "10px", width: "100px" }}
+        >
+          Cancel
+        </Button>
+        <Button
+          color="red"
+          loading={deleteLoading}
+          onClick={handleDelete}
+          style={{ width: "100px" }}
+        >
+          Delete
+        </Button>
+      </Modal>
+      <Button
+        onClick={() => setOpenDeleteModal(true)}
+        // add margin to the right
+        style={{ marginRight: "10px", width: "100px" }}
+      >
+        Delete
+      </Button>
+
+      <Button onClick={handleEditModal} style={{ width: "100px" }}>
+        Edit
+      </Button>
       {openModal && (
         <Modal
           opened={openModal}
           onClose={() => setOpenModal(false)}
           title="Edit Guide"
-
         >
-          <Text fz="xl" fw={700} my="xl">
-            Edit Guide
-          </Text>
           <Input
             placeholder="Guide's name"
             defaultValue={guide.name}
@@ -112,7 +127,10 @@ function GuideItem({
             defaultValue={guide.phone}
             value={editGuide.phone}
             onChange={(e) =>
-              setEditGuide({ ...editGuide, phone: e.target.value===""?guide.phone:e.target.value })
+              setEditGuide({
+                ...editGuide,
+                phone: e.target.value === "" ? guide.phone : e.target.value,
+              })
             }
             style={{ width: "100%", marginBottom: "10px" }}
           />

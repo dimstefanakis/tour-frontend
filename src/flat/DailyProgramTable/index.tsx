@@ -10,6 +10,7 @@ import {
   Select,
   Flex,
   ActionIcon,
+  Loader,
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons";
 import getFormattedDate from "../../utils/getFormattedDate";
@@ -86,9 +87,11 @@ function Tour({
   getTours,
   date,
   locations,
-  availableGuides,
+  // availableGuides,
   destination,
 }: any) {
+  const [guidesLoading, setGuidesLoading] = useState(false);
+  const [availableGuides, setAvailableGuides] = useState<any>([]);
   const [selectedLocation, setSelectedLocation] = useState<any>(
     tour?.tour_location?.id
   );
@@ -108,6 +111,30 @@ function Tour({
   function handleTourTimeChange(value: any) {
     setSelectedTourTime(value);
   }
+
+  const getGuides = async () => {
+    let selectedDate = getFormattedDate(date);
+    setGuidesLoading(true);
+    let body;
+    if (tour.guide) {
+      body = {
+        day: selectedDate,
+        location: selectedLocation,
+        tour: tour?.id,
+      };
+    } else {
+      body = {
+        day: selectedDate,
+        location: selectedLocation,
+      };
+    }
+    let response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/guides/availability_for_location/`,
+      body
+    );
+    setGuidesLoading(false);
+    setAvailableGuides(response.data);
+  };
 
   function deleteTour() {
     axios
@@ -186,17 +213,30 @@ function Tour({
         placeholder="Guide"
         onChange={handleGuideChange}
         value={selectedGuide}
-        data={availableGuides.map((guide: any) => {
-          return {
-            label: guide.name,
-            value: guide.id,
-          };
-        })}
+        onDropdownOpen={getGuides}
+        disabled={!selectedLocation}
+        rightSection={guidesLoading ? <Loader size={16} /> : null}
+        data={
+          tour.guide && availableGuides.length == 0
+            ? [
+                {
+                  label: tour.guide.name,
+                  value: tour.guide.id,
+                },
+              ]
+            : availableGuides.map((guide: any) => {
+                return {
+                  label: guide.name,
+                  value: guide.id,
+                };
+              })
+        }
       />
       <Select
         w="25%"
         label="Select time"
         placeholder="AM/PM"
+        disabled={!selectedLocation || !selectedGuide}
         onChange={handleTourTimeChange}
         value={selectedTourTime}
         data={[
