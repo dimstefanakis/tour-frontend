@@ -152,9 +152,9 @@ function DailyProgram() {
 
   async function handleSubmit() {
     const eta = new Date(
-      createdDestination.eta_date.getFullYear(),
-      createdDestination.eta_date.getMonth(),
-      createdDestination.eta_date.getDate(),
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
       createdDestination.eta_time.getHours(),
       createdDestination.eta_time.getMinutes(),
       createdDestination.eta_time.getSeconds()
@@ -213,11 +213,9 @@ function DailyProgram() {
         <Text fz="xl" fw={700} my="xl">
           Daily Program
         </Text>
-        <Popover opened={calendarOpen} position="bottom" withArrow shadow="md">
+        <Popover position="bottom" withArrow shadow="md">
           <Popover.Target>
-            <Button onClick={() => setCalendarOpen(true)}>
-              {formatDate(selectedDate)}
-            </Button>
+            <Button>{formatDate(selectedDate)}</Button>
           </Popover.Target>
           <Popover.Dropdown>
             <Calendar
@@ -273,9 +271,9 @@ function DailyProgram() {
                 />
                 <Flex style={{ marginTop: "10px" }}>
                   <DatePicker
-                    required
+                    disabled
                     placeholder="Arrival date"
-                    onChange={onEtaDateChange}
+                    value={selectedDate}
                     style={{ marginRight: 5, width: "100%" }}
                   />
                   <TimeInput

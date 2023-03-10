@@ -12,7 +12,7 @@ import {
   ActionIcon,
   Loader,
 } from "@mantine/core";
-import { IconTrash } from "@tabler/icons";
+import { IconTrash, IconEdit } from "@tabler/icons";
 import getFormattedDate from "../../utils/getFormattedDate";
 import axios from "axios";
 
@@ -24,6 +24,11 @@ function DailyProgramTable({ date, destination, availableGuides }: any) {
   function handleAdd() {
     setTours([...tours, { id: tours.length + 1 }]);
   }
+
+  function handleEdit(e: React.MouseEvent, destination: any) {
+    e.stopPropagation();
+  }
+
   const getLocations = () => {
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/locations/`).then((res) => {
       setLocations(res.data);
@@ -75,7 +80,16 @@ function DailyProgramTable({ date, destination, availableGuides }: any) {
         </Container>
       }
     >
-      <Text fz="md">{destination.name}</Text>
+      <Flex>
+        <Text fz="md">{destination.name}</Text>
+        <ActionIcon
+          onClick={(e) => handleEdit(e, destination)}
+          variant="default"
+          ml="auto"
+        >
+          <IconEdit size="1rem"/>
+        </ActionIcon>
+      </Flex>
     </ItemBox>
   );
 }

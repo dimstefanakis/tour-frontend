@@ -25,6 +25,7 @@ export default function Home() {
     {
       id: "",
       name: "",
+      email: "",
       phone: "",
       notes: "",
     },
@@ -33,6 +34,7 @@ export default function Home() {
   const [newGuides, setNewGuides] = useState([
     {
       name: "",
+      email: "",
       phone: "",
       notes: "",
     },
@@ -84,11 +86,12 @@ export default function Home() {
     }));
   };
 
-  const { name, phone, notes, id }: any = newGuides;
+  const { name, email, phone, notes, id }: any = newGuides;
   const handleSubmit = async () => {
     const newGuide = {
       name,
       phone,
+      email,
       notes,
       id,
     };
@@ -151,6 +154,12 @@ export default function Home() {
               <Input
                 placeholder="Guide's name"
                 name="name"
+                onChange={handleChange}
+                style={{ marginTop: "10px" }}
+              />
+              <Input
+                placeholder="Guide's email"
+                name="email"
                 onChange={handleChange}
                 style={{ marginTop: "10px" }}
               />

@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Button, Paper, Text, Modal, Input } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  Paper,
+  Text,
+  Modal,
+  Input,
+  ActionIcon,
+} from "@mantine/core";
+import { IconEdit, IconTrash } from "@tabler/icons";
 import ItemBox from "../ItemBox";
 import axios from "axios";
 
@@ -49,6 +58,7 @@ function GuideItem({
   //edit guide
   const [editGuide, setEditGuide] = useState({
     name: guide.name,
+    email: guide.email,
     phone: guide.phone,
     notes: guide.notes,
   });
@@ -96,17 +106,18 @@ function GuideItem({
           Delete
         </Button>
       </Modal>
-      <Button
-        onClick={() => setOpenDeleteModal(true)}
-        // add margin to the right
-        style={{ marginRight: "10px", width: "100px" }}
-      >
-        Delete
-      </Button>
-
-      <Button onClick={handleEditModal} style={{ width: "100px" }}>
-        Edit
-      </Button>
+      <Flex style={{ marginTop: "20px" }}>
+        <ActionIcon
+          variant="default"
+          onClick={() => setOpenDeleteModal(true)}
+          style={{ marginRight: "10px" }}
+        >
+          <IconTrash size="1rem" />
+        </ActionIcon>
+        <ActionIcon variant="default" onClick={handleEditModal}>
+          <IconEdit size="1rem" />
+        </ActionIcon>
+      </Flex>
       {openModal && (
         <Modal
           opened={openModal}
@@ -119,6 +130,15 @@ function GuideItem({
             value={editGuide.name}
             onChange={(e) =>
               setEditGuide({ ...editGuide, name: e.target.value })
+            }
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+          <Input
+            placeholder="Guide's email"
+            defaultValue={guide.email}
+            value={editGuide.email}
+            onChange={(e) =>
+              setEditGuide({ ...editGuide, email: e.target.value })
             }
             style={{ width: "100%", marginBottom: "10px" }}
           />
